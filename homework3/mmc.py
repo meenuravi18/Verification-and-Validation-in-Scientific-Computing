@@ -53,6 +53,16 @@ for Nx in Nx_vals:
     SRQ_umax_err   = abs(SRQ_umax_num - SRQ_umax_exact) 
     srq_errors.append(SRQ_umax_err)
     h.append((x_max-x_min)/(Nx-1))
+    if Nx==128:
+        error = np.abs(U - u_exact)
+        plt.figure()
+        plt.contourf(X, Y, error, 20)
+        plt.colorbar(label="Error")
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("Local discretization error (Mesh Node=128) in space")
+        plt.show()
+    
     print("done with Nx =", Nx)
 
 print(f"l2normerrors: {l2normerrors}")
@@ -88,17 +98,48 @@ plt.show()
 # Iteratively converge each case down to machine precision (i.e., until iterative
 # residuals can no longer be reduced due to round-off error)
 
-# I use 128 as the mesh size
+# I use 16 as the mesh size
+
+# kap = np.float32(0.1)
+# eps = np.float32(0.3)
+# upc = np.float32(3)
+# alp = np.float32(0)
+# q = np.float32(1)
+# x_min, x_max = np.float32(0), np.float32(1)
+# y_min, y_max = np.float32(0), np.float32(1)
+# t_min, t_max = np.float32(0), np.float32(1)
+
+# physical_parameters = {    
+#     'kap': kap, # diffusion coefficient
+#     'eps': eps, # inverse of activation energy
+#     'upc': upc, # u phase change
+#     'q': q, # reaction heat
+#     'alp': alp, 
+#     'x_lim': (x_min, x_max), # x-axis domain 
+#     'y_lim': (y_min, y_max), # y-axis domain
+#     't_lim': (t_min, t_max), # time domain
+#     'components':(True, False, False)
+# }
+
+
+# wildfire_ = wildfire.Fire(**physical_parameters)
+# u_exacts=[]
+# h=[]
+# srq_errors=[]
+# l2normerrors = []
+# linfnormerrors=[]
+
 # Nx_vals = np.array([16])
 # for Nx in Nx_vals:
     
 #     Ny = Nx
 #     Nt = 5 * Nx**2 
 #     V = lambda x, y, t: (0*x, 0*y)
-#     b0 = lambda X, Y: np.sin(np.pi*X)*np.sin(np.pi*Y)
-#     u0 = lambda X, Y: np.sin(np.pi*X)*np.sin(np.pi*Y)
+#     b0 = lambda X, Y: (np.sin(np.pi*X)*np.sin(np.pi*Y)).astype(np.float32)
+#     u0 = lambda X, Y: (np.sin(np.pi*X)*np.sin(np.pi*Y)).astype(np.float32)
 
 #     t, X, Y, U_low, B = wildfire_.solvePDE(Nx, Ny, Nt, u0, b0, V, 'FD', 'RK4', last=True, acc=2, sparse=False)
+#     U_low = U_low.astype(np.float32)
 #     u_exact = (1 + t[-1]) * np.sin(np.pi*X) * np.sin(np.pi*Y)
 #     l2normerror = np.sqrt(((1/(Nx-1))**2) * (np.sum(np.abs(U_low - u_exact)**2)))
 #     linfnormerror = np.max(np.abs(U_low - u_exact))
@@ -135,7 +176,7 @@ plt.show()
 
 
 # wildfire_ = wildfire.Fire(**physical_parameters)
-
+# h=[]
 # for Nx in Nx_vals:
     
 #     Ny = Nx
@@ -162,5 +203,6 @@ plt.show()
 # roundoff_L2 = np.sqrt(((1/(Nx-1))**2) * np.sum((U_low - U_high)**2))
 # print(U_low.dtype)
 # print(U_high.dtype)
+
 # print("Round-off Linf:", roundoff_Linf)
 # print("Round-off L2:", roundoff_L2)
