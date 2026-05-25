@@ -53,15 +53,14 @@ for Nx in Nx_vals:
     SRQ_umax_err   = abs(SRQ_umax_num - SRQ_umax_exact) 
     srq_errors.append(SRQ_umax_err)
     h.append((x_max-x_min)/(Nx-1))
-    if Nx==128:
-        error = np.abs(U - u_exact)
-        plt.figure()
-        plt.contourf(X, Y, error, 20)
-        plt.colorbar(label="Error")
-        plt.xlabel("x")
-        plt.ylabel("y")
-        plt.title("Local discretization error (Mesh Node=128) in space")
-        plt.show()
+    error = np.abs(U - u_exact)
+    # plt.figure()
+    # plt.contourf(X, Y, error, 20)
+    # plt.colorbar(label="Error")
+    # plt.xlabel("x")
+    # plt.ylabel("y")
+    # plt.title(f"Local discretization error (Mesh Node={str(Nx)}) in space")
+    # plt.show()
     
     print("done with Nx =", Nx)
 
@@ -77,18 +76,33 @@ p2 = np.log(E2[:-1]/E2[1:]) / np.log(h_arr[:-1]/h_arr[1:])
 pinf = np.log(Einf[:-1]/Einf[1:]) / np.log(h_arr[:-1]/h_arr[1:])
 psrq = np.log(ESRQ[:-1]/ESRQ[1:]) / np.log(h_arr[:-1]/h_arr[1:])
 
-plt.figure()
-plt.semilogx(h_arr[:-1], p2, 'o-', label='Order (L2)')
-plt.semilogx(h_arr[:-1], pinf, 's-', label='Order (Linf)')
-plt.semilogx(h_arr[:-1], psrq, '^-', label='Order (SRQ)')
+# plt.figure()
+# plt.semilogx(h_arr[:-1], p2, 'o-', label='Order (L2)')
+# plt.semilogx(h_arr[:-1], pinf, 's-', label='Order (Linf)')
+# plt.semilogx(h_arr[:-1], psrq, '^-', label='Order (SRQ)')
 
-plt.axhline(2, color='k', linestyle='--', label='2nd order')
+# plt.axhline(2, color='k', linestyle='--', label='2nd order')
+
+# plt.xlabel('h')
+# plt.ylabel('Observed Order p')
+# plt.legend()
+# plt.show()
+
+
+plt.figure()
+plt.loglog(h_arr, E2,   'o-', label='L2 Error')
+plt.loglog(h_arr, Einf, 's-', label='Linf Error')
+plt.loglog(h_arr, ESRQ, '^-', label='SRQ Error')
+
+# Reference slope for 2nd order
+h_ref = np.array([h_arr[0], h_arr[-1]])
+plt.loglog(h_ref, E2[0] * (h_ref / h_arr[0])**2, 'k--', label='2nd order slope')
 
 plt.xlabel('h')
-plt.ylabel('Observed Order p')
+plt.ylabel('Discretization Error')
 plt.legend()
+plt.title('DE norms vs mesh size')
 plt.show()
-
 
 # Work for Round off error calculation
 # Run simulation with desired precision
